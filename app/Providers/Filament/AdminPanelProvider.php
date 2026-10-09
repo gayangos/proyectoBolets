@@ -30,9 +30,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->maxContentWidth(Width::Full)
+            ->brandLogo(asset('imagenes/marca/logo.svg'))
+            ->brandLogoHeight('2.75rem')
+            ->favicon(asset('imagenes/marca/isologo.svg'))
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#C09537'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
