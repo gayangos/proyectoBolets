@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->maxContentWidth(Width::Full)
             ->brandLogo(asset('imagenes/marca/logo.svg'))
+            ->font('Poppins')
             ->brandLogoHeight('2.75rem')
             ->favicon(asset('imagenes/marca/isologo.svg'))
             ->login()
