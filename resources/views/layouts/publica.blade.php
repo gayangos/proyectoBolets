@@ -16,7 +16,9 @@
                 <img src="{{ asset('imagenes/marca/logo.svg') }}" alt="{{ __('Bolets comestibles de Mallorca') }}" class="h-12">
             </a>
             <nav class="flex items-center gap-6 text-sm font-medium">
-                <a href="{{ route('catalogo.index') }}" class="hover:text-ocre {{ request()->routeIs('catalogo.*') ? 'text-ocre' : '' }}">{{ __('Bolets') }}</a>
+            <a href="{{ route('inicio') }}" class="hover:text-ocre {{ request()->routeIs('inicio') ? 'text-ocre' : '' }}">{{ __('Inici') }}</a>
+            <a href="{{ route('catalogo.index') }}" class="hover:text-ocre {{ request()->routeIs('catalogo.*') ? 'text-ocre' : '' }}">{{ __('Bolets') }}</a>
+            <a href="{{ route('mes') }}" class="hover:text-ocre {{ request()->routeIs('mes') ? 'text-ocre' : '' }}">{{ __('Més') }}</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="hover:text-ocre">{{ __('La meva zona') }}</a>
                 @else
@@ -37,9 +39,9 @@
         @yield('contenido')
     </main>
 
-    <footer class="bg-bosque text-beige text-sm">
-        <div class="max-w-7xl mx-auto px-4 py-6">
-            {{ __('Bolets comestibles de Mallorca') }} · David Gayangos
+    <footer class="bg-bosque text-white text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center">
+            {{ __('Bolets comestibles de Mallorca') }} · David Gayangos · <a href="mailto:gayangos@gmail.com" class="hover:text-ocre">{{ __('Contacte') }}</a>
         </div>
     </footer>
 </body>
