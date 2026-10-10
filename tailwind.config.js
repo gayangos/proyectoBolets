@@ -14,6 +14,15 @@ export default {
             fontFamily: {
                 sans: ['Poppins', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                bosque: '#31401A',
+                ocre: '#C09537',
+                marron: '#6B5E42',
+                tierra: '#261D12',
+                oliva: '#656643',
+                salvia: '#A1A680',
+                beige: '#CBBDA0',
+            },
         },
     },
 

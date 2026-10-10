@@ -3,22 +3,30 @@
 namespace Database\Seeders;
 
 use App\Models\Especie;
+use App\Models\EspecieTraduccion;
 use Illuminate\Database\Seeder;
 
 class ImportarCatalogoSeeder extends Seeder
 {
     /**
-     * Importa el catálogo de la web estática (database/data/bolets.json).
+     * Fichero JSON de cada idioma en database/data. Todos comparten el id de la especie.
+     */
+    private const FICHEROS = [
+        'ca' => 'bolets.json',
+        'es' => 'setas.json',
+    ];
+
+    /**
+     * Importa el catálogo de la web estática. Los datos comunes salen del JSON
+     * del idioma base y los textos de cada idioma, de su propio JSON.
      * Conserva el id del JSON, que es el que usan las fotos (b_{id}.jpg).
      */
     public function run(): void
     {
-        $ruta = database_path('data/bolets.json');
-        $especies = json_decode(file_get_contents($ruta), true, flags: JSON_THROW_ON_ERROR);
+        $base = config('bolets.idioma_base');
 
-        Especie::unguarded(function () use ($especies) {
-            foreach ($especies as $s) {
-                $comun = trim($s['comun'] ?? '');
+        Especie::unguarded(function () use ($base) {
+            foreach ($this->leer(self::FICHEROS[$base]) as $s) {
                 $valoracion = mb_strtolower(trim($s['comestible'] ?? ''));
                 $valoracion = ['bona' => 'bo', 'protegit' => 'protegida'][$valoracion] ?? $valoracion;
                 $autor = html_entity_decode(strip_tags($s['autor'] ?? ''));
@@ -28,18 +36,44 @@ class ImportarCatalogoSeeder extends Seeder
                     ['id' => (int) $s['id']],
                     [
                         'nombre_cientifico' => trim($s['cientifico']),
-                        'nombre_comun' => in_array(mb_strtolower($comun), ['', 'z'], true) ? null : $comun,
                         'grupo' => mb_strtolower(trim($s['tipo'])),
                         'valoracion' => $valoracion,
-                        'habitat' => trim($s['ubicacion'] ?? '') ?: null,
-                        'descripcion' => trim($s['datos'] ?? '') ?: null,
                         'autor_foto' => $autor ?: null,
-                        'palabras_clave' => trim($s['busqueda'] ?? '') ?: null,
                     ]
                 );
             }
         });
 
-        $this->command->info(count($especies) . ' especies importadas.');
+        foreach (self::FICHEROS as $idioma => $fichero) {
+            $especies = $this->leer($fichero);
+
+            foreach ($especies as $s) {
+                $comun = $this->texto($s['comun'] ?? null);
+
+                EspecieTraduccion::updateOrCreate(
+                    ['especie_id' => (int) $s['id'], 'idioma' => $idioma],
+                    [
+                        'nombre_comun' => mb_strtolower($comun ?? '') === 'z' ? null : $comun,
+                        'habitat' => $this->texto($s['ubicacion'] ?? null),
+                        'descripcion' => $this->texto($s['datos'] ?? null),
+                        'palabras_clave' => $this->texto($s['busqueda'] ?? null),
+                    ]
+                );
+            }
+
+            $this->command->info(count($especies) . " especies importadas en {$idioma}.");
+        }
+    }
+
+    private function leer(string $fichero): array
+    {
+        return json_decode(file_get_contents(database_path("data/{$fichero}")), true, flags: JSON_THROW_ON_ERROR);
+    }
+
+    private function texto(?string $valor): ?string
+    {
+        $valor = trim($valor ?? '');
+
+        return $valor === '' ? null : $valor;
     }
 }

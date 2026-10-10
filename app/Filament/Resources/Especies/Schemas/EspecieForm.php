@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Especies\Schemas;
 
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -19,9 +20,12 @@ class EspecieForm
             9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre',
         ];
 
+        $idiomas = config('bolets.idiomas');
+
         return $schema
             ->components([
                 Section::make('Especie')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         TextInput::make('nombre_cientifico')
@@ -29,9 +33,6 @@ class EspecieForm
                             ->required()
                             ->maxLength(100)
                             ->unique(ignoreRecord: true),
-                        TextInput::make('nombre_comun')
-                            ->label('Nombre común')
-                            ->maxLength(100),
                         TextInput::make('grupo')
                             ->label('Grupo')
                             ->required()
@@ -47,23 +48,48 @@ class EspecieForm
                                 'precaució' => 'precaució',
                                 'protegida' => 'protegida',
                             ]),
-                        TextInput::make('habitat')
-                            ->label('Hábitat')
-                            ->maxLength(150),
                         TextInput::make('arbolado')
                             ->label('Arbolado')
                             ->maxLength(100),
-                        Textarea::make('descripcion')
-                            ->label('Descripción')
-                            ->rows(4)
-                            ->columnSpanFull(),
                         TextInput::make('autor_foto')
                             ->label('Autor de la foto')
                             ->maxLength(150),
-                        TextInput::make('palabras_clave')
-                            ->label('Palabras clave'),
+                    ]),
+                Section::make('Textos por idioma')
+                    ->columnSpanFull()
+                    ->schema([
+                        Repeater::make('traducciones')
+                            ->hiddenLabel()
+                            ->relationship()
+                            ->columns(2)
+                            ->collapsible()
+                            ->maxItems(count($idiomas))
+                            ->default(collect($idiomas)->keys()->map(fn ($codigo) => ['idioma' => $codigo])->all())
+                            ->itemLabel(fn (array $state): ?string => isset($idiomas[$state['idioma'] ?? '']) ? mb_strtoupper($idiomas[$state['idioma']]) : null)
+                            ->addActionLabel('Añadir idioma')
+                            ->schema([
+                                Select::make('idioma')
+                                    ->label('Idioma')
+                                    ->options($idiomas)
+                                    ->required()
+                                    ->distinct()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                                TextInput::make('nombre_comun')
+                                    ->label('Nombre común')
+                                    ->maxLength(100),
+                                TextInput::make('habitat')
+                                    ->label('Hábitat')
+                                    ->maxLength(150),
+                                TextInput::make('palabras_clave')
+                                    ->label('Palabras clave'),
+                                Textarea::make('descripcion')
+                                    ->label('Descripción')
+                                    ->rows(4)
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
                 Section::make('Avisos')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Toggle::make('en_avisos')

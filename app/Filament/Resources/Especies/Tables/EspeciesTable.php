@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Especies\Tables;
 
+use App\Models\Especie;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -28,11 +29,10 @@ class EspeciesTable
                     ->extraAttributes(['style' => 'font-style: italic'])
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('nombre_comun')
+                TextColumn::make('traduccionBase.nombre_comun')
                     ->label('Nombre común')
                     ->placeholder('—')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 TextColumn::make('grupo')
                     ->label('Grupo')
                     ->sortable(),
@@ -44,7 +44,7 @@ class EspeciesTable
                     ->label('Avisos')
                     ->boolean()
                     ->sortable(),
-                TextColumn::make('habitat')
+                TextColumn::make('traduccionBase.habitat')
                     ->label('Hábitat')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('autor_foto')
@@ -65,7 +65,7 @@ class EspeciesTable
                     ->label('En avisos'),
                 SelectFilter::make('valoracion')
                     ->label('Valoración')
-                    ->options(fn () => \App\Models\Especie::query()->distinct()->orderBy('valoracion')->pluck('valoracion', 'valoracion')->all()),
+                    ->options(fn () => Especie::query()->distinct()->orderBy('valoracion')->pluck('valoracion', 'valoracion')->all()),
             ])
             ->recordActions([
                 EditAction::make(),

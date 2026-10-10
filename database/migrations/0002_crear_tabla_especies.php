@@ -11,14 +11,10 @@ return new class extends Migration
         Schema::create('especies', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_cientifico', 100)->unique();
-            $table->string('nombre_comun', 100)->nullable();
             $table->string('grupo', 30);
             $table->string('valoracion', 20);
-            $table->string('habitat', 150)->nullable();
-            $table->text('descripcion')->nullable();
             $table->string('autor_foto', 150)->nullable();
             $table->string('foto')->nullable();
-            $table->text('palabras_clave')->nullable();
             $table->string('provincia', 50)->default('Illes Balears');
             $table->string('tipo_clima', 30)->default('mediterrani');
             $table->unsignedTinyInteger('temporada_inicio')->nullable();
