@@ -14,7 +14,7 @@ class GenerarAvisos extends Command
 {
     protected $signature = 'avisos:generar {--fecha= : Día del índice API10 (por defecto, el último calculado)}';
 
-    protected $description = 'Genera los avisos de los municipios cuyo API10 supera el umbral de una especie en temporada';
+    protected $description = 'Genera los avisos de los municipios cuyo API10 supera el umbral de una especie en temporada, con temperatura adecuada';
 
     public function handle(): int
     {
@@ -31,7 +31,7 @@ class GenerarAvisos extends Command
         $especies = Especie::where('en_avisos', true)->get()
             ->filter(fn (Especie $e) => $this->enTemporada($e, $fecha->month));
 
-        $indices = Indice::whereDate('fecha', $fecha)->pluck('api10', 'estacion');
+        $indices = Indice::whereDate('fecha', $fecha)->get()->keyBy('estacion');
         $avisos = 0;
 
         // Se rehacen los avisos del día para que no queden avisos antiguos si cambia el índice.
@@ -39,19 +39,19 @@ class GenerarAvisos extends Command
             Aviso::whereDate('fecha', $fecha)->delete();
 
             foreach (Municipio::whereNotNull('estacion')->get() as $municipio) {
-                $api10 = $indices[$municipio->estacion] ?? null;
+                $indice = $indices[$municipio->estacion] ?? null;
 
-                if ($api10 === null) {
+                if ($indice === null || ! $this->temperaturaAdecuada($indice->temperatura)) {
                     continue;
                 }
 
                 foreach ($especies as $especie) {
-                    if ((float) $api10 > (float) $especie->umbral_api10) {
+                    if ($indice->api10 > (float) $especie->umbral_api10) {
                         Aviso::create([
                             'municipio_id' => $municipio->id,
                             'especie_id' => $especie->id,
                             'fecha' => $fecha->toDateString(),
-                            'api10' => $api10,
+                            'api10' => $indice->api10,
                         ]);
                         $avisos++;
                     }
@@ -62,6 +62,15 @@ class GenerarAvisos extends Command
         $this->info("{$avisos} avisos generados para el {$fecha->format('d/m/Y')} ({$especies->count()} especies en temporada).");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Sin dato de temperatura no se descarta el aviso; con dato, debe estar en el rango de config/bolets.php.
+     */
+    private function temperaturaAdecuada(?float $temperatura): bool
+    {
+        return $temperatura === null
+            || ($temperatura >= config('bolets.temperatura.minima') && $temperatura <= config('bolets.temperatura.maxima'));
     }
 
     /**

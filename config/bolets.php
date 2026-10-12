@@ -16,4 +16,15 @@ return [
      */
     'idioma_base' => 'ca',
 
+
+    /*
+     * Temperatura media (°C) de los últimos días necesaria para generar avisos:
+     * con frío o calor intensos las setas no salen aunque haya llovido.
+     */
+    'temperatura' => [
+        'dias' => 7,
+        'minima' => 8,
+        'maxima' => 24,
+    ],
+
 ];

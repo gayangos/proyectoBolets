@@ -8,10 +8,11 @@ class Lluvia extends Model
 {
     protected $table = 'lluvias';
 
-    protected $fillable = ['estacion', 'fecha', 'precipitacion'];
+    protected $fillable = ['estacion', 'fecha', 'precipitacion', 'temperatura'];
 
     protected $casts = [
         'fecha' => 'date',
         'precipitacion' => 'float',
+        'temperatura' => 'float',
     ];
 }
