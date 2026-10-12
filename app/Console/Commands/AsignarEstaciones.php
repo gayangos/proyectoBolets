@@ -22,7 +22,18 @@ class AsignarEstaciones extends Command
             ->map(fn (array $e) => $e + ['lat' => $this->grados($e['latitud']), 'lon' => $this->grados($e['longitud'])])
             ->filter(fn (array $e) => $e['lat'] > 39.2 && $e['lat'] < 40.0 && $e['lon'] > 2.3 && $e['lon'] < 3.5);
 
-        $this->info($estaciones->count() . ' estaciones en Mallorca.');
+                // Solo sirven las estaciones que publican lluvia diaria (algunas no tienen datos).
+                $inicio = now()->subDays(15)->toDateString() . 'T00:00:00UTC';
+                $fin = now()->subDay()->toDateString() . 'T23:59:59UTC';
+                // AEMET admite como mucho 25 estaciones por petición.
+                 $conDatos = $estaciones->pluck('indicativo')
+                ->chunk(25)
+                ->flatMap(fn ($grupo) => $aemet->get("valores/climatologicos/diarios/datos/fechaini/{$inicio}/fechafin/{$fin}/estacion/{$grupo->implode(',')}"))
+                ->pluck('indicativo')
+                    ->unique();
+                $estaciones = $estaciones->whereIn('indicativo', $conDatos);
+        
+                $this->info($estaciones->count() . ' estaciones en Mallorca con lluvia diaria.');
 
         foreach (Municipio::orderBy('nombre')->get() as $municipio) {
             $datos = $maestro->get($municipio->codigo_ine);

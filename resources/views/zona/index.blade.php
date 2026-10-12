@@ -29,6 +29,11 @@
 
     <div class="mt-8 pt-4 border-t border-beige flex gap-6">
         <a href="{{ route('profile.edit') }}" class="text-bosque hover:text-ocre">{{ __('El meu perfil') }}</a>
+
+        @if (auth()->user()->is_admin)
+            <a href="{{ url('/admin') }}" class="text-bosque hover:text-ocre">{{ __('Administració') }}</a>
+        @endif
+
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="text-bosque hover:text-ocre">{{ __('Surt') }}</button>
