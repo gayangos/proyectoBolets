@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'aemet' => [
+        'key' => env('AEMET_API_KEY'),
+        'url' => 'https://opendata.aemet.es/opendata/api',
+    ],
+
 ];
