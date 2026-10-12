@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CatalogoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaginaController;
+use App\Http\Controllers\ZonaController;
 
 Route::get('/', [PaginaController::class, 'inicio'])->name('inicio');
 Route::get('/mes', [PaginaController::class, 'mes'])->name('mes');
@@ -19,9 +20,10 @@ Route::get('/idioma/{idioma}', function (string $idioma) {
     return back();
 })->name('idioma');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/zona', [ZonaController::class, 'index'])->name('dashboard');
+    Route::put('/zona/municipis', [ZonaController::class, 'municipios'])->name('zona.municipios');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

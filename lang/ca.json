@@ -372,5 +372,11 @@
     "Yes": "Sí",
     "You are receiving this email because we received a password reset request for your account.": "Heu rebut aquest correu electrònic perquè s'ha solicitat el restabliment de la contrasenya per al vostre compte.",
     "You're logged in!": "Has iniciat sessió!",
-    "Your email address is unverified.": "La teva adreça de correu electrònic no està verificada."
+    "Your email address is unverified.": "La teva adreça de correu electrònic no està verificada.",
+    "Els meus municipis": "Els meus municipis",
+    "Marca els municipis on vols rebre avisos.": "Marca els municipis on vols rebre avisos.",
+    "Desa": "Desa",
+    "Municipis desats.": "Municipis desats.",
+    "El meu perfil": "El meu perfil",
+    "Surt": "Surt"
 }
