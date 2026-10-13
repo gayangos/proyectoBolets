@@ -19,12 +19,14 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             @foreach ($avisos as $municipio => $lista)
                 <div class="bg-white border border-beige rounded-lg p-4">
-                    <h3 class="font-semibold text-bosque mb-2">{{ $municipio }} <span class="text-sm font-normal text-marron">· API10 {{ number_format($lista->first()->api10, 1, ',', '') }}</span></h3>
+                <h3 class="font-semibold text-black uppercase mb-2">{{ $municipio }} <span class="text-sm font-normal text-marron">· API10 {{ number_format($lista->first()->api10, 1, ',', '') }}</span></h3>
                     <ul class="space-y-1">
                         @foreach ($lista as $aviso)
                             <li>
-                                <a href="{{ route('catalogo.show', $aviso->especie) }}" class="italic hover:text-ocre">{{ $aviso->especie->nombre_cientifico }}</a>
-                                <span class="text-sm text-marron">{{ $aviso->especie->nombreComunVisible() }}</span>
+                            <a href="{{ route('catalogo.show', $aviso->especie) }}" class="hover:text-ocre">{{ $aviso->especie->nombre_cientifico }}</a>
+                                @if ($aviso->especie->texto('nombre_comun'))
+                                    <span class="text-sm text-marron">({{ $aviso->especie->texto('nombre_comun') }})</span>
+                                @endif
                             </li>
                         @endforeach
                     </ul>
