@@ -48,9 +48,10 @@ class EspecieForm
                                 'precaució' => 'precaució',
                                 'protegida' => 'protegida',
                             ]),
-                        TextInput::make('arbolado')
-                            ->label('Arbolado')
-                            ->maxLength(100),
+                        CheckboxList::make('arbolado')
+                        ->label('Hábitat')
+                        ->options(collect(config('bolets.habitats'))->keys()->mapWithKeys(fn (string $h) => [$h => ucfirst($h)])->all())
+                        ->columns(4),
                         TextInput::make('autor_foto')
                             ->label('Autor de la foto')
                             ->maxLength(150),

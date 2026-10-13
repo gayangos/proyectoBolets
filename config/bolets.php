@@ -27,4 +27,21 @@ return [
         'maxima' => 24,
     ],
 
+        /*
+     * Hábitats a partir del mapa de ocupación del suelo SIOSE 2017 (IDEIB).
+     * Cada hábitat agrupa códigos de cobertura. En Mallorca las coníferas
+     * son casi todas pinar de pino carrasco y las frondosas, encinar.
+     */
+    'habitats' => [
+        'pinar' => [316],
+        'encinar' => [312, 313],
+        'matorral' => [300, 301, 320],
+        'prados' => [290],
+    ],
+
+    /*
+     * Superficie mínima (ha) del hábitat de una especie para avisar en un municipio.
+     */
+    'habitat_minimo' => 50,
+
 ];

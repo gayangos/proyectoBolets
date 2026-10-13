@@ -4,17 +4,19 @@ namespace App\Console\Commands;
 
 use App\Models\Aviso;
 use App\Models\Especie;
+use App\Models\Habitat;
 use App\Models\Indice;
 use App\Models\Municipio;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class GenerarAvisos extends Command
 {
     protected $signature = 'avisos:generar {--fecha= : Día del índice API10 (por defecto, el último calculado)}';
 
-    protected $description = 'Genera los avisos de los municipios cuyo API10 supera el umbral de una especie en temporada, con temperatura adecuada';
+    protected $description = 'Genera los avisos de los municipios cuyo API10 supera el umbral de una especie en temporada, con temperatura y hábitat adecuados';
 
     public function handle(): int
     {
@@ -32,10 +34,15 @@ class GenerarAvisos extends Command
             ->filter(fn (Especie $e) => $this->enTemporada($e, $fecha->month));
 
         $indices = Indice::whereDate('fecha', $fecha)->get()->keyBy('estacion');
+
+        // Hectáreas de cada hábitat por municipio: [municipio_id => [habitat => hectareas]].
+        $hectareas = Habitat::all()->groupBy('municipio_id')
+            ->map(fn (Collection $filas) => $filas->pluck('hectareas', 'habitat'));
+
         $avisos = 0;
 
         // Se rehacen los avisos del día para que no queden avisos antiguos si cambia el índice.
-        DB::transaction(function () use ($fecha, $especies, $indices, &$avisos) {
+        DB::transaction(function () use ($fecha, $especies, $indices, $hectareas, &$avisos) {
             Aviso::whereDate('fecha', $fecha)->delete();
 
             foreach (Municipio::whereNotNull('estacion')->get() as $municipio) {
@@ -45,8 +52,11 @@ class GenerarAvisos extends Command
                     continue;
                 }
 
+                $habitatsMunicipio = $hectareas[$municipio->id] ?? collect();
+
                 foreach ($especies as $especie) {
-                    if ($indice->api10 > (float) $especie->umbral_api10) {
+                    if ($indice->api10 > (float) $especie->umbral_api10
+                        && $this->habitatAdecuado($especie, $habitatsMunicipio)) {
                         Aviso::create([
                             'municipio_id' => $municipio->id,
                             'especie_id' => $especie->id,
@@ -71,6 +81,16 @@ class GenerarAvisos extends Command
     {
         return $temperatura === null
             || ($temperatura >= config('bolets.temperatura.minima') && $temperatura <= config('bolets.temperatura.maxima'));
+    }
+
+    /**
+     * Sin hábitat asignado no se descarta la especie; con hábitat, el municipio debe tener
+     * entre todos sus hábitats la superficie mínima de config/bolets.php.
+     */
+    private function habitatAdecuado(Especie $especie, Collection $habitatsMunicipio): bool
+    {
+        return empty($especie->arbolado)
+            || $habitatsMunicipio->only($especie->arbolado)->sum() >= config('bolets.habitat_minimo');
     }
 
     /**

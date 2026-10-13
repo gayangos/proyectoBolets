@@ -32,6 +32,7 @@ class Especie extends Model
             'temporada_fin' => 'integer',
             'umbral_api10' => 'decimal:1',
             'en_avisos' => 'boolean',
+            'arbolado' => 'array',
         ];
     }
 
