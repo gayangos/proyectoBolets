@@ -382,5 +382,10 @@
     "Administració": "Administració",
     "Avisos": "Avisos",
     "No hi ha avisos als teus municipis.": "No hi ha avisos als teus municipis.",
-    "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:": "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:"
+    "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:": "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:",
+    "Els meus bolets": "Els meus bolets",
+    "Marca els bolets dels quals vols rebre avisos. Si no en marques cap, rebràs avisos de tots.": "Marca els bolets dels quals vols rebre avisos. Si no en marques cap, rebràs avisos de tots.",
+    "Bolets desats.": "Bolets desats.",
+    "Avisos de bolets": "Avisos de bolets",
+    "Pots canviar els municipis i els bolets a La meva zona.": "Pots canviar els municipis i els bolets a La meva zona."
 }

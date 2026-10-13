@@ -8,7 +8,6 @@
         <p class="mb-4 text-bosque">{{ session('estado') }}</p>
     @endif
 
-
     <h2 class="text-xl font-semibold text-marron mb-2">{{ __('Avisos') }}</h2>
 
     @if ($avisos->isEmpty())
@@ -19,11 +18,11 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             @foreach ($avisos as $municipio => $lista)
                 <div class="bg-white border border-beige rounded-lg p-4">
-                <h3 class="font-semibold text-black uppercase mb-2">{{ $municipio }} <span class="text-sm font-normal text-marron">· API10 {{ number_format($lista->first()->api10, 1, ',', '') }}</span></h3>
+                    <h3 class="font-semibold text-black uppercase mb-2">{{ $municipio }} <span class="text-sm font-normal text-marron">· API10 {{ number_format($lista->first()->api10, 1, ',', '') }}</span></h3>
                     <ul class="space-y-1">
                         @foreach ($lista as $aviso)
                             <li>
-                            <a href="{{ route('catalogo.show', $aviso->especie) }}" class="hover:text-ocre">{{ $aviso->especie->nombre_cientifico }}</a>
+                                <a href="{{ route('catalogo.show', $aviso->especie) }}" class="hover:text-ocre">{{ $aviso->especie->nombre_cientifico }}</a>
                                 @if ($aviso->especie->texto('nombre_comun'))
                                     <span class="text-sm text-marron">({{ $aviso->especie->texto('nombre_comun') }})</span>
                                 @endif
@@ -34,8 +33,6 @@
             @endforeach
         </div>
     @endif
-
-
 
     <form method="POST" action="{{ route('zona.municipios') }}">
         @csrf
@@ -56,13 +53,35 @@
         <button type="submit" class="px-4 py-2 bg-bosque text-white rounded hover:bg-ocre">{{ __('Desa') }}</button>
     </form>
 
+    <form method="POST" action="{{ route('zona.especies') }}" class="mt-8">
+        @csrf
+        @method('PUT')
+
+        <h2 class="text-xl font-semibold text-marron mb-2">{{ __('Els meus bolets') }}</h2>
+        <p class="mb-4">{{ __('Marca els bolets dels quals vols rebre avisos. Si no en marques cap, rebràs avisos de tots.') }}</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
+            @foreach ($setas as $seta)
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" name="especies[]" value="{{ $seta->id }}" class="rounded border-beige text-ocre focus:ring-ocre" @checked(in_array($seta->id, $setasElegidas))>
+                    <span>
+                        {{ $seta->nombre_cientifico }}
+                        @if ($seta->texto('nombre_comun'))
+                            <span class="text-sm text-marron">({{ $seta->texto('nombre_comun') }})</span>
+                        @endif
+                    </span>
+                </label>
+            @endforeach
+        </div>
+
+        <button type="submit" class="px-4 py-2 bg-bosque text-white rounded hover:bg-ocre">{{ __('Desa') }}</button>
+    </form>
+
     <div class="mt-8 pt-4 border-t border-beige flex gap-6">
         <a href="{{ route('profile.edit') }}" class="text-bosque hover:text-ocre">{{ __('El meu perfil') }}</a>
-
         @if (auth()->user()->is_admin)
             <a href="{{ url('/admin') }}" class="text-bosque hover:text-ocre">{{ __('Administració') }}</a>
         @endif
-
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="text-bosque hover:text-ocre">{{ __('Surt') }}</button>

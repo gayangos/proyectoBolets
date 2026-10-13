@@ -33,6 +33,13 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->belongsToMany(Municipio::class)->withTimestamps()->orderBy('nombre');
     }
+    /**
+     * Setas de las que el usuario quiere recibir avisos.
+     */
+    public function especies(): BelongsToMany
+    {
+        return $this->belongsToMany(Especie::class)->withTimestamps();
+    }
 
     /**
      * Get the attributes that should be cast.

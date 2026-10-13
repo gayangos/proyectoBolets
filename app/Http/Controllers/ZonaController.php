@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aviso;
+use App\Models\Especie;
 use App\Models\Municipio;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\Aviso;
 
 class ZonaController extends Controller
 {
     public function index(Request $request): View
     {
         $elegidos = $request->user()->municipios()->pluck('municipios.id')->all();
+        $setasElegidas = $request->user()->especies()->pluck('especies.id')->all();
         $fecha = Aviso::max('fecha');
 
         // Avisos del último día calculado en los municipios del usuario, agrupados por municipio.
+        // Si el usuario no ha elegido setas, se muestran todas.
         $avisos = Aviso::with(['municipio', 'especie.traducciones'])
             ->whereIn('municipio_id', $elegidos)
+            ->when($setasElegidas, fn ($consulta) => $consulta->whereIn('especie_id', $setasElegidas))
             ->where('fecha', $fecha)
             ->get()
             ->sortBy(fn (Aviso $a) => $a->especie->nombre_cientifico)
@@ -27,6 +31,8 @@ class ZonaController extends Controller
         return view('zona.index', [
             'municipios' => Municipio::orderBy('nombre')->get(),
             'elegidos' => $elegidos,
+            'setas' => Especie::with('traducciones')->where('en_avisos', true)->orderBy('nombre_cientifico')->get(),
+            'setasElegidas' => $setasElegidas,
             'avisos' => $avisos,
             'fecha' => $fecha,
         ]);
@@ -42,5 +48,17 @@ class ZonaController extends Controller
         $request->user()->municipios()->sync($datos['municipios'] ?? []);
 
         return back()->with('estado', __('Municipis desats.'));
+    }
+
+    public function especies(Request $request): RedirectResponse
+    {
+        $datos = $request->validate([
+            'especies' => ['array'],
+            'especies.*' => ['integer', 'exists:especies,id'],
+        ]);
+
+        $request->user()->especies()->sync($datos['especies'] ?? []);
+
+        return back()->with('estado', __('Bolets desats.'));
     }
 }

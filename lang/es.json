@@ -382,5 +382,10 @@
     "Administració": "Administración",
     "Avisos": "Avisos",
     "No hi ha avisos als teus municipis.": "No hay avisos en tus municipios.",
-    "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:": "Lluvia registrada hasta el :data. Es probable que salgan estas setas:"
+    "Pluja registrada fins al :data. És probable que hi surtin aquests bolets:": "Lluvia registrada hasta el :data. Es probable que salgan estas setas:",
+    "Els meus bolets": "Mis setas",
+    "Marca els bolets dels quals vols rebre avisos. Si no en marques cap, rebràs avisos de tots.": "Marca las setas de las que quieres recibir avisos. Si no marcas ninguna, recibirás avisos de todas.",
+    "Bolets desats.": "Setas guardadas.",
+    "Avisos de bolets": "Avisos de setas",
+    "Pots canviar els municipis i els bolets a La meva zona.": "Puedes cambiar los municipios y las setas en tu zona."
 }

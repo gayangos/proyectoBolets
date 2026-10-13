@@ -23,6 +23,7 @@ Route::get('/idioma/{idioma}', function (string $idioma) {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/zona', [ZonaController::class, 'index'])->name('dashboard');
     Route::put('/zona/municipis', [ZonaController::class, 'municipios'])->name('zona.municipios');
+    Route::put('/zona/bolets', [ZonaController::class, 'especies'])->name('zona.especies');
 });
 
 Route::middleware('auth')->group(function () {

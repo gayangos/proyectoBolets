@@ -13,3 +13,4 @@ Artisan::command('inspire', function () {
 Schedule::command('lluvia:descargar')->dailyAt('07:00')->timezone('Europe/Madrid');
 Schedule::command('api10:calcular')->dailyAt('07:10')->timezone('Europe/Madrid');
 Schedule::command('avisos:generar')->dailyAt('07:20')->timezone('Europe/Madrid');
+Schedule::command('avisos:enviar')->dailyAt('07:30')->timezone('Europe/Madrid');
