@@ -13,7 +13,7 @@ class EnviarAvisos extends Command
 {
     protected $signature = 'avisos:enviar';
 
-    protected $description = 'Envía por correo a cada usuario los avisos del día de sus municipios y setas';
+    protected $description = 'Envía por correo a cada usuario los avisos del día de sus municipios y setas, según la frecuencia que ha elegido';
 
     public function handle(): int
     {
@@ -25,9 +25,14 @@ class EnviarAvisos extends Command
             return self::FAILURE;
         }
 
+        $hoy = Carbon::today('Europe/Madrid');
         $enviados = 0;
 
-        foreach (User::whereHas('municipios')->get() as $usuario) {
+        foreach (User::whereHas('municipios')->where('aviso_frecuencia', '!=', 'nunca')->get() as $usuario) {
+            if (! $this->toca($usuario, $hoy)) {
+                continue;
+            }
+
             $municipios = $usuario->municipios()->pluck('municipios.id');
             $setas = $usuario->especies()->pluck('especies.id');
 
@@ -49,11 +54,24 @@ class EnviarAvisos extends Command
                 ->locale(config('bolets.idioma_base'))
                 ->send(new AvisosDelDia($usuario, $avisos, $fecha));
 
+            $usuario->forceFill(['ultimo_aviso' => $hoy->toDateString()])->save();
             $enviados++;
         }
 
         $this->info("{$enviados} correos enviados con los avisos del ".Carbon::parse($fecha)->format('d/m/Y').'.');
 
         return self::SUCCESS;
+    }
+
+    // Diaria: cada día. Semanal: el día elegido (1 = lunes … 7 = domingo).
+    // Cada X días: si nunca se le ha enviado o ya han pasado X días desde el último correo.
+    private function toca(User $usuario, Carbon $hoy): bool
+    {
+        return match ($usuario->aviso_frecuencia) {
+            'diaria' => true,
+            'semanal' => $hoy->isoWeekday() === (int) $usuario->aviso_dia_semana,
+            'dias' => ! $usuario->ultimo_aviso || Carbon::parse($usuario->ultimo_aviso)->addDays((int) $usuario->aviso_cada_dias)->lte($hoy),
+            default => false,
+        };
     }
 }

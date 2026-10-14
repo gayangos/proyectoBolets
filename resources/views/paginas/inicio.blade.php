@@ -6,10 +6,11 @@
     <p class="mt-1 text-marron">{{ __("nova web responsive") }}</p>
 
     <section class="mt-8 space-y-4">
-        <h2 class="text-xl font-semibold text-ocre">{{ __("Inici") }}</h2>
-        <p>{{ __("Deixant a un costat hipotètiques receptes culinàries de l'antic Egipte o bé, misterioses fórmules d'ofrenes als déus, bé per a ungüents de la primitiva farmacopea, o per a l'obtenció de al-lucinògens,") }} <strong>{{ __("la primera notícia sobre els bolets ens arriba de la Mitologia hel-lènica") }}</strong> {{ __("sobre la llegenda de l'heroi grec Perseo qui al matar sense pretendre'l al seu avi Acrisio, mogut pel remordiment va voler intercanviar el seu regne amb el de Megapente. Durant el camí, esgotat i assedegat sort va tenir de l'aigua que va poder beure emmagatzemada en el barret d'un bolet de regular dimensió.") }}</p>
-        <p>{{ __("Per a commemorar l'esdeveniment va fundar una ciutat que va cridar Miceba que en grec significa fong (mykés), d'aquí deriva la paraula Micologia.") }} <strong>{{ __("El terme fong deriva de 'fungus' que significa portadors de mort a causa de la toxicitat de nombrosos bolets") }}</strong>.</p>
-        <p>{{ __("El gust pels bolets va existir per descomptat al món romà, així els fongs són esmentats pràcticament en totes les cultures des de l'època imperial fins el Renaixement és no obstant això durant el segle XVIII quan es van iniciar veritablement les classificacions científiques a través del francès Pierre Bulliard i l'italià Pier Antonio Michelli considerats els pares de la Micologia, tasca que van continuar Lucien Quélet, Elías Fries,...") }}</p>
+        <h2 class="text-xl font-semibold text-ocre">{{ __("La zona privada") }}</h2>
+        <p>{{ __("Serveis intro") }}</p>
+        <p>{{ __("Serveis zona") }}</p>
+        <p>{{ __("Serveis bolets") }}</p>
+        <p>{{ __("Serveis correu") }}</p>
     </section>
 
     <section class="mt-8 space-y-4">

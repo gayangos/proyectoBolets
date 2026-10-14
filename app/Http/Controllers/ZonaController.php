@@ -61,4 +61,17 @@ class ZonaController extends Controller
 
         return back()->with('estado', __('Bolets desats.'));
     }
+
+    public function frecuencia(Request $request): RedirectResponse
+    {
+        $datos = $request->validate([
+            'aviso_frecuencia' => ['required', 'in:nunca,diaria,semanal,dias'],
+            'aviso_dia_semana' => ['nullable', 'required_if:aviso_frecuencia,semanal', 'integer', 'between:1,7'],
+            'aviso_cada_dias' => ['nullable', 'required_if:aviso_frecuencia,dias', 'integer', 'between:2,30'],
+        ]);
+
+        $request->user()->forceFill($datos)->save();
+
+        return back()->with('estado', __('Avisos per correu desats.'));
+    }
 }

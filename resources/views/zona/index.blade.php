@@ -4,6 +4,14 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-ocre mb-6">{{ __('La meva zona') }}</h1>
 
+    <div class="mb-8">
+        <h2 class="font-semibold text-marron mb-1">{{ __('Com es calculen els avisos') }}</h2>
+        <p>{{ __('Ajuda dades') }}</p>
+        <p class="mt-1">{{ __('Ajuda API10') }}</p>
+        <p class="mt-1 font-mono">{{ __('Ajuda fórmula') }}</p>
+        <p class="mt-1">{{ __('Ajuda condicions', ['minima' => config('bolets.temperatura.minima'), 'maxima' => config('bolets.temperatura.maxima')]) }}</p>
+    </div>
+
     @if (session('estado'))
         <p class="mb-4 text-bosque">{{ session('estado') }}</p>
     @endif
@@ -72,6 +80,44 @@
                     </span>
                 </label>
             @endforeach
+        </div>
+
+        <button type="submit" class="px-4 py-2 bg-bosque text-white rounded hover:bg-ocre">{{ __('Desa') }}</button>
+    </form>
+
+    <form method="POST" action="{{ route('zona.frecuencia') }}" class="mt-8">
+        @csrf
+        @method('PUT')
+
+        <h2 class="text-xl font-semibold text-marron mb-2">{{ __('Avisos per correu') }}</h2>
+        <p class="mb-4">{{ __('Ajuda correu') }}</p>
+
+        @php($frecuencia = old('aviso_frecuencia', auth()->user()->aviso_frecuencia))
+
+        <div class="space-y-2 mb-6">
+            <label class="flex items-center gap-2">
+                <input type="radio" name="aviso_frecuencia" value="nunca" class="border-beige text-ocre focus:ring-ocre" @checked($frecuencia === 'nunca')>
+                {{ __('No vull rebre correus') }}
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="radio" name="aviso_frecuencia" value="diaria" class="border-beige text-ocre focus:ring-ocre" @checked($frecuencia === 'diaria')>
+                {{ __('Cada dia') }}
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="radio" name="aviso_frecuencia" value="semanal" class="border-beige text-ocre focus:ring-ocre" @checked($frecuencia === 'semanal')>
+                {{ __('Un cop per setmana, el') }}
+                <select name="aviso_dia_semana" class="rounded border-beige focus:ring-ocre focus:border-ocre py-1">
+                    @foreach ([1 => 'dilluns', 2 => 'dimarts', 3 => 'dimecres', 4 => 'dijous', 5 => 'divendres', 6 => 'dissabte', 7 => 'diumenge'] as $numero => $dia)
+                        <option value="{{ $numero }}" @selected(old('aviso_dia_semana', auth()->user()->aviso_dia_semana) == $numero)>{{ __($dia) }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="radio" name="aviso_frecuencia" value="dias" class="border-beige text-ocre focus:ring-ocre" @checked($frecuencia === 'dias')>
+                {{ __('Cada') }}
+                <input type="number" name="aviso_cada_dias" min="2" max="30" value="{{ old('aviso_cada_dias', auth()->user()->aviso_cada_dias ?? 10) }}" class="w-20 rounded border-beige focus:ring-ocre focus:border-ocre py-1">
+                {{ __('dies') }}
+            </label>
         </div>
 
         <button type="submit" class="px-4 py-2 bg-bosque text-white rounded hover:bg-ocre">{{ __('Desa') }}</button>

@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/zona', [ZonaController::class, 'index'])->name('dashboard');
     Route::put('/zona/municipis', [ZonaController::class, 'municipios'])->name('zona.municipios');
     Route::put('/zona/bolets', [ZonaController::class, 'especies'])->name('zona.especies');
+    Route::put('/zona/avisos', [ZonaController::class, 'frecuencia'])->name('zona.frecuencia');
 });
 
 Route::middleware('auth')->group(function () {
