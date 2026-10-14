@@ -14,6 +14,8 @@ class Municipio extends Model
         'nombre',
         'provincia',
         'estacion',
+        'latitud',
+        'longitud',
     ];
 
     /* Usuarios que siguen el municipio. */

@@ -28,8 +28,20 @@ class ZonaController extends Controller
             ->groupBy(fn (Aviso $a) => $a->municipio->nombre)
             ->sortKeys();
 
+        $municipios = Municipio::orderBy('nombre')->get();
+
+        // Puntos del mapa: todos los municipios con coordenadas, si el usuario los sigue y sus setas con aviso.
+        $puntos = $municipios->whereNotNull('latitud')->map(fn (Municipio $m) => [
+            'nombre' => $m->nombre,
+            'lat' => (float) $m->latitud,
+            'lon' => (float) $m->longitud,
+            'elegido' => in_array($m->id, $elegidos),
+            'setas' => $avisos->get($m->nombre, collect())->map(fn (Aviso $a) => $a->especie->nombre_cientifico)->values(),
+        ])->values();
+
         return view('zona.index', [
-            'municipios' => Municipio::orderBy('nombre')->get(),
+            'municipios' => $municipios,
+            'puntos' => $puntos,
             'elegidos' => $elegidos,
             'setas' => Especie::with('traducciones')->where('en_avisos', true)->orderBy('nombre_cientifico')->get(),
             'setasElegidas' => $setasElegidas,

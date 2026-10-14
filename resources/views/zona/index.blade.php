@@ -18,6 +18,8 @@
 
     <h2 class="text-xl font-semibold text-marron mb-2">{{ __('Avisos') }}</h2>
 
+    <div id="mapa" class="h-96 rounded-lg mb-6 z-0"></div>
+
     @if ($avisos->isEmpty())
         <p class="mb-8">{{ __('No hi ha avisos als teus municipis.') }}</p>
     @else
@@ -134,4 +136,51 @@
         </form>
     </div>
 </div>
+<script>
+    // Mapa de la zona: gris, municipios no elegidos; verde, elegidos; ocre, elegidos con avisos.
+    document.addEventListener('DOMContentLoaded', () => {
+        const zona = @json(config('bolets.zona'));
+        const puntos = @json($puntos);
+        const textos = { senseAvisos: @json(__('Sense avisos')) };
+
+        const mapa = L.map('mapa').fitBounds([[zona.latitud[0], zona.longitud[0]], [zona.latitud[1], zona.longitud[1]]]);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap',
+        }).addTo(mapa);
+
+        puntos.forEach((p) => {
+            const conAvisos = p.setas.length > 0;
+            const color = conAvisos ? '#C09537' : (p.elegido ? '#31401A' : '#9CA3AF');
+
+            const circulo = L.circleMarker([p.lat, p.lon], {
+                radius: conAvisos ? 9 : (p.elegido ? 7 : 4),
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.8,
+                weight: 1,
+            }).addTo(mapa);
+
+            const contenido = document.createElement('div');
+            const titulo = document.createElement('strong');
+            titulo.textContent = p.nombre;
+            contenido.append(titulo);
+
+            if (conAvisos) {
+                const lista = document.createElement('ul');
+                p.setas.forEach((s) => {
+                    const item = document.createElement('li');
+                    item.textContent = s;
+                    lista.append(item);
+                });
+                contenido.append(lista);
+            } else if (p.elegido) {
+                contenido.append(document.createElement('br'), textos.senseAvisos);
+            }
+
+            circulo.bindPopup(contenido);
+        });
+    });
+</script>
 @endsection
