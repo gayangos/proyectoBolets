@@ -9,7 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-
+use Filament\Forms\Components\CheckboxList;
 class EspecieForm
 {
     public static function configure(Schema $schema): Schema
@@ -110,10 +110,11 @@ class EspecieForm
                             ->label('Provincia')
                             ->required()
                             ->maxLength(50),
-                        TextInput::make('tipo_clima')
+                        Select::make('tipo_clima')
                             ->label('Tipo de clima')
-                            ->required()
-                            ->maxLength(30),
+                            ->options(config('bolets.climas'))
+                            ->default('mediterrani')
+                            ->required(),
                     ]),
             ]);
     }

@@ -51,7 +51,7 @@ class EnviarAvisos extends Command
             }
 
             Mail::to($usuario)
-                ->locale(config('bolets.idioma_base'))
+                ->locale($usuario->idioma)
                 ->send(new AvisosDelDia($usuario, $avisos, $fecha));
 
             $usuario->forceFill(['ultimo_aviso' => $hoy->toDateString()])->save();

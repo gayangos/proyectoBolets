@@ -5,6 +5,7 @@ use App\Http\Controllers\CatalogoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ZonaController;
+use App\Http\Controllers\CuadernoController;
 
 Route::get('/', [PaginaController::class, 'inicio'])->name('inicio');
 Route::get('/mes', [PaginaController::class, 'mes'])->name('mes');
@@ -25,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/zona/municipis', [ZonaController::class, 'municipios'])->name('zona.municipios');
     Route::put('/zona/bolets', [ZonaController::class, 'especies'])->name('zona.especies');
     Route::put('/zona/avisos', [ZonaController::class, 'frecuencia'])->name('zona.frecuencia');
+    Route::get('/quadern', [CuadernoController::class, 'index'])->name('cuaderno');
+    Route::post('/quadern/crear', [CuadernoController::class, 'crear'])->name('cuaderno.crear');
+    Route::post('/quadern', [CuadernoController::class, 'guardar'])->name('cuaderno.guardar');
+    Route::delete('/quadern/{hallazgo}', [CuadernoController::class, 'borrar'])->name('cuaderno.borrar');
 });
 
 Route::middleware('auth')->group(function () {

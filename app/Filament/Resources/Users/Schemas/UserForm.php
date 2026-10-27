@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -36,6 +37,12 @@ class UserForm
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->dehydrated(fn (?string $state): bool => filled($state))
                             ->helperText(fn (string $operation): ?string => $operation === 'edit' ? 'Déjala en blanco para no cambiarla.' : null),
+                        // Idioma de la web y de los correos de avisos.
+                        Select::make('idioma')
+                            ->label('Idioma')
+                            ->options(config('bolets.idiomas'))
+                            ->default(config('bolets.idioma_base'))
+                            ->required(),
                         // Un administrador no puede quitarse a sí mismo el permiso.
                         Toggle::make('is_admin')
                             ->label('Administrador')

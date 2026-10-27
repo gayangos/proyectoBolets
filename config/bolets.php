@@ -42,6 +42,8 @@ return [
      * Cada hábitat agrupa códigos de cobertura. En Mallorca las coníferas
      * son casi todas pinar de pino carrasco y las frondosas, encinar.
      */
+
+     
     'habitats' => [
         'pinar' => [316],
         'encinar' => [312, 313],
@@ -49,6 +51,15 @@ return [
         'prados' => [290],
     ],
 
+    /*
+     * Tipos de clima que se pueden asignar a una especie en el panel.
+     */
+    'climas' => [
+        'mediterrani' => 'Mediterráneo',
+        'atlantic' => 'Atlántico',
+        'continental' => 'Continental',
+        'muntanya' => 'De montaña',
+    ],
     /*
      * Superficie mínima (ha) del hábitat de una especie para avisar en un municipio.
      */
