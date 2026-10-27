@@ -1,0 +1,62 @@
+name: Integración y despliegue
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  integracion:
+    name: Pruebas y compilación
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, pdo_sqlite, zip
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Dependencias de PHP
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Entorno de pruebas
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Dependencias de JavaScript
+        run: npm ci
+
+      - name: Compilación
+        run: npm run build
+
+      - name: Pruebas
+        run: php artisan test
+
+  despliegue:
+    name: Despliegue en boletsapp
+    needs: integracion
+    runs-on: self-hosted
+
+    steps:
+      - name: Despliegue
+        working-directory: /var/www/bolets
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          test -n "$ENV_FILE"
+          git pull origin main
+          printf '%s\n' "$ENV_FILE" > .env
+          composer install --no-interaction --no-dev --optimize-autoloader
+          npm ci
+          npm run build
+          php artisan migrate --force
+          php artisan optimize:clear
